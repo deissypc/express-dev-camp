@@ -37,7 +37,7 @@ router.put('/:id', (req,res)=>{
         )
 })
 //delete
-router.delete('/api/v1/bootcamps/:id', (req,res)=>{
+router.delete('/:id', (req,res)=>{
     res.status(200).json(
         {
             "message" : `aqui se va a eliminar el bootcamps por id :${req.params.id}`
