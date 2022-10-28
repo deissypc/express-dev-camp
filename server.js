@@ -4,6 +4,7 @@ const UserRoutes=require('./config_env/routes/UserRoutes')
 const express = require('express')
 const dotenv = require('dotenv')
 const collors = require('colors')
+const listEnpoints = require('express-list-endpoints')
 
 //dependencia a la conexion a base de datos
 const connectDB = require('./config/db')
@@ -15,12 +16,16 @@ dotenv.config({
 
 //1.Crear el Objeto app 
 const app =express()
-
+//hacer esto
+app.use(express.json())
+//
 //ejecutar conexion a base d datos
 connectDB()
 
 app.use('/api/v1/bootcamps', bootcampRoutes )
 app.use('/api/v1/users', UserRoutes)
+
+console.log(listEnpoints(app))
 
 
 //3.metodo listen:ejecutar servidor
