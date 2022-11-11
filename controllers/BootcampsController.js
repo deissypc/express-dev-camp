@@ -3,21 +3,21 @@ const sequelize = require ('../config/seq')
 //DataTypes
 const { DataTypes, ValidationError } = require('sequelize')
 //el modelo
-const UserModel = require('../models/user')
-const user = require('../models/user')
+const BootcampModel = require('../models/bootcamp')
+const bootcamp = require('../models/bootcamp')
 //crear obtjeto usuario
-const User = UserModel(sequelize,DataTypes)
+const Bootcamp = BootcampModel(sequelize,DataTypes)
 
 
 
 //get: obtenetr datos
-exports.traerUsers = async (req,res)=>{
+exports.traerBootcamps = async (req,res)=>{
     try {
-        const users = await User.findAll();
+        const bootcamps = await Bootcamp.findAll();
     res.status(200).json(
         {
             "succes" : true,
-            "data" : users
+            "data" : bootcamps
         }
     )
     } catch (error) {
@@ -32,11 +32,11 @@ exports.traerUsers = async (req,res)=>{
 } 
 
 //obtener recurso por id
-exports.traerUserPorId = async (req, res)=>{
+exports.traerBootcampPorId = async (req, res)=>{
     try {
-        const userId = await User.findByPk(req.params.id)
+        const bootcampId = await User.findByPk(req.params.id)
         //si usuario no existe
-        if(!userId){
+        if(!bootcampId){
            res.status(422).json(
             {
                 "success": false,
@@ -49,7 +49,7 @@ exports.traerUserPorId = async (req, res)=>{
         res.status(200).json(
             {
                 "succes" : true,
-                "data" : userId
+                "data" : bootcampId
             }
         )
     } catch (error) {
@@ -64,12 +64,12 @@ exports.traerUserPorId = async (req, res)=>{
 }
 
 //POST : crear un nuevo recurso
-exports.crearUser = async(req,res)=>{
+exports.crearBootcamp = async(req,res)=>{
     try {
-        const newUser = await User.create(req.body)
+        const newBootcamp = await Bootcamp.create(req.body)
         res.status(201).json({
                 "succes" : true,
-                "data" : newUser
+                "data" : newBootcamp
             })
     } catch (error) {
         if( error instanceof ValidationError){
@@ -93,11 +93,11 @@ exports.crearUser = async(req,res)=>{
 }
 
 //Put - PATCH:actualizar
-exports.actualizarUser = async(req,res)=>{
+exports.actualizarBootcamps = async(req,res)=>{
     try {
          //consultar datos actualizados
-    const upUser = await User.findByPk(req.params.id)
-    if(!upUser){
+    const upBootcamp = await Bootcamp.findByPk(req.params.id)
+    if(!upBootcamp){
         //RESPONSE DE USUARIO NO ENTONYRADO
         res.status(422).json(
             {
@@ -109,17 +109,17 @@ exports.actualizarUser = async(req,res)=>{
            )
     }else{
  //actualizar usuario por id
- await User.update(req.body, {
+ await Bootcamp.update(req.body, {
     where: {
         id: req.params.id
     }
 });
     //seleccionar usuario actualizado
-    const upUser = await User.findByPk(req.params.id)
+    const upBootcamp = await Bootcamp.findByPk(req.params.id)
     res.status(200).json(
         {
             "succes" : true,
-            "data" : upUser
+            "data" : upBootcamp
         } 
     )
 }
@@ -137,21 +137,40 @@ exports.actualizarUser = async(req,res)=>{
 
 
 //delete
-exports.borrarUser = async(req,res)=>{
-    //buscar usuario por id
-    const u = await User.findByPk(req.params.id)
-    // Borrar usuario por id
-await User.destroy({
-    where: {
-     id: req.params.id
+exports.borrarBootcamps = async(req,res)=>{
+
+    try {
+        const deBootcamp= await Bootcamp.findByPk(req.params.id)
+        if(!deBootcamp){
+            //RESPONSE DE USUARIO NO ENTONYRADO
+            res.status(422).json(
+                {
+                    "success": false,
+                    "errors":[
+                        "bootcamp no existe"
+                    ]
+                }
+               )
+        }else{
+            await Bootcamp.destroy({
+                where: {
+                 id: req.params.id
+                }
+              });
+          }
+              
+        }
+     catch (error) {
+        res
+        .status(500)
+        .json({
+           "sucess":false,
+           "errors": "error de servidor"
+        })
     }
-  });
-res.status(200).json(
-        {
-            "succes" : true,
-            "data" : u
-        } 
-    )
 }
+    
+
+
     
 

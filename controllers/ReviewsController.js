@@ -3,21 +3,21 @@ const sequelize = require ('../config/seq')
 //DataTypes
 const { DataTypes, ValidationError } = require('sequelize')
 //el modelo
-const UserModel = require('../models/user')
-const user = require('../models/user')
+const ReviewsModel = require('../models/reviews')
+const reviews = require('../models/reviews')
 //crear obtjeto usuario
-const User = UserModel(sequelize,DataTypes)
+const Review = ReviewsModel(sequelize,DataTypes)
 
 
 
 //get: obtenetr datos
-exports.traerUsers = async (req,res)=>{
+exports.traerReviews= async (req,res)=>{
     try {
-        const users = await User.findAll();
+        const reviews = await Review.findAll();
     res.status(200).json(
         {
             "succes" : true,
-            "data" : users
+            "data" : reviews
         }
     )
     } catch (error) {
@@ -32,16 +32,16 @@ exports.traerUsers = async (req,res)=>{
 } 
 
 //obtener recurso por id
-exports.traerUserPorId = async (req, res)=>{
+exports.traerReviewPorId = async (req, res)=>{
     try {
-        const userId = await User.findByPk(req.params.id)
+        const reviewId = await Review.findByPk(req.params.id)
         //si usuario no existe
-        if(!userId){
+        if(!reviewId){
            res.status(422).json(
             {
                 "success": false,
                 "errors":[
-                    "usuario no existe"
+                    " review no existe"
                 ]
             }
            )
@@ -49,7 +49,7 @@ exports.traerUserPorId = async (req, res)=>{
         res.status(200).json(
             {
                 "succes" : true,
-                "data" : userId
+                "data" : reviewId
             }
         )
     } catch (error) {
@@ -64,12 +64,12 @@ exports.traerUserPorId = async (req, res)=>{
 }
 
 //POST : crear un nuevo recurso
-exports.crearUser = async(req,res)=>{
+exports.crearReviews = async(req,res)=>{
     try {
-        const newUser = await User.create(req.body)
+        const newReview = await Review.create(req.body)
         res.status(201).json({
                 "succes" : true,
-                "data" : newUser
+                "data" : newReview
             })
     } catch (error) {
         if( error instanceof ValidationError){
@@ -86,40 +86,40 @@ exports.crearUser = async(req,res)=>{
      .status(500)
      .json({
         "sucess":false,
-        "errors": "error de servidor"
+        "errors": error
      })
     }
 }
 }
 
 //Put - PATCH:actualizar
-exports.actualizarUser = async(req,res)=>{
+exports.actualizarReviews = async(req,res)=>{
     try {
          //consultar datos actualizados
-    const upUser = await User.findByPk(req.params.id)
-    if(!upUser){
+    const upReview = await Review.findByPk(req.params.id)
+    if(!upReview){
         //RESPONSE DE USUARIO NO ENTONYRADO
         res.status(422).json(
             {
                 "success": false,
                 "errors":[
-                    "usuario no existe"
+                    "review no existe"
                 ]
             }
            )
     }else{
  //actualizar usuario por id
- await User.update(req.body, {
+ await Review.update(req.body, {
     where: {
         id: req.params.id
     }
 });
     //seleccionar usuario actualizado
-    const upUser = await User.findByPk(req.params.id)
+    const upReview = await Review.findByPk(req.params.id)
     res.status(200).json(
         {
             "succes" : true,
-            "data" : upUser
+            "data" : upReview
         } 
     )
 }
@@ -137,21 +137,46 @@ exports.actualizarUser = async(req,res)=>{
 
 
 //delete
-exports.borrarUser = async(req,res)=>{
-    //buscar usuario por id
-    const u = await User.findByPk(req.params.id)
-    // Borrar usuario por id
-await User.destroy({
-    where: {
-     id: req.params.id
+exports.borrarReview = async(req,res)=>{
+
+    try {
+        const deReview= await Review.findByPk(req.params.id)
+        if(!deReview){
+            //RESPONSE DE USUARIO NO ENTONYRADO
+            res.status(422).json(
+                {
+                    "success": false,
+                    "errors":[
+                        "courser no existe"
+                    ]
+                }
+               )
+        }else{
+            await Review.destroy({
+                where: {
+                 id: req.params.id
+                }
+              });
+              const deReview = await Review.findByPk(req.params.id)
+              res.status(200).json(
+                  {
+                      "succes" : true,
+                      "data" : deReview
+                  } 
+              )
+          
+          }
+              
+        }
+        
+     catch (error) {
+        res
+        .status(500)
+        .json({
+           "sucess":false,
+           "errors": "error de servidor"
+        })
     }
-  });
-res.status(200).json(
-        {
-            "succes" : true,
-            "data" : u
-        } 
-    )
 }
     
 

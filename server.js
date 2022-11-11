@@ -1,6 +1,8 @@
 //dependencias
 const bootcampRoutes =require('./config_env/routes/BootcampRoutes')
 const UserRoutes=require('./config_env/routes/UserRoutes')
+const CourserRoutes=require('./config_env/routes/CourserRoutes')
+const ReviewRoutes=require('./config_env/routes/ReviewsRoutes')
 const express = require('express')
 const dotenv = require('dotenv')
 const collors = require('colors')
@@ -24,6 +26,8 @@ connectDB()
 
 app.use('/api/v1/bootcamps', bootcampRoutes )
 app.use('/api/v1/users', UserRoutes)
+app.use('/api/v1/courser', CourserRoutes)
+app.use('/api/v1/reviews', ReviewRoutes)
 
 console.log(listEnpoints(app))
 
